@@ -1,1 +1,1 @@
-# nutritionist-service-event-sourcing-
+# nutritionist-service
