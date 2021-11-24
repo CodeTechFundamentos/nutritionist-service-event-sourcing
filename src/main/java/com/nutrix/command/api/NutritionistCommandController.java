@@ -41,8 +41,11 @@ public class NutritionistCommandController {
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Registro de un Recipe de un Nutritionist", notes ="Método que registra un Nutritionist" )
     @ApiResponses({
-            @ApiResponse(code=201, message = "Nutritionist creado"),
-            @ApiResponse(code=404, message = "Nutritionist no creado")
+            @ApiResponse(code=200, message = "La operación fue exitosa", response = Nutritionist.class),
+            @ApiResponse(code=201, message = "Nutritionists creado", response = Nutritionist.class),
+            @ApiResponse(code=401, message = "Es necesario autenticar para obtener la respuesta solicitada"),
+            @ApiResponse(code=403, message = "El cliente no posee los permisos necesarios"),
+            @ApiResponse(code=404, message = "Nutritionists no creado")
     })
     public ResponseEntity<Object> insertNutritionist(@Validated @RequestBody CreateNutritionistModel nutritionist){
         String id = UUID.randomUUID().toString();

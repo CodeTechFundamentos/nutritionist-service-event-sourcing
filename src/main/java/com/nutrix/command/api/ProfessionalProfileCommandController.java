@@ -1,6 +1,7 @@
 package com.nutrix.command.api;
 
 import com.nutrix.command.application.dto.ErrorResponseDto;
+import com.nutrix.command.infra.ProfessionalProfile;
 import com.nutrix.query.models.CreateProfessionalProfileModel;
 import command.CreateProfessionalProfileC;
 import io.swagger.annotations.Api;
@@ -38,8 +39,11 @@ public class ProfessionalProfileCommandController {
     @PostMapping(path = "", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Registro de un Professional Profile", notes ="Método que registra un Professional Profile" )
     @ApiResponses({
-            @ApiResponse(code=201, message = "Professional Profile creado"),
-            @ApiResponse(code=404, message = "Professional Profile no creado")
+            @ApiResponse(code=200, message = "La operación fue exitosa", response = ProfessionalProfile.class),
+            @ApiResponse(code=201, message = "Professional Profiles creado", response = ProfessionalProfile.class),
+            @ApiResponse(code=401, message = "Es necesario autenticar para obtener la respuesta solicitada"),
+            @ApiResponse(code=403, message = "El cliente no posee los permisos necesarios"),
+            @ApiResponse(code=404, message = "Professional Profiles no creado")
     })
     public ResponseEntity<Object> insertProfessionalProfile(@Validated @RequestBody CreateProfessionalProfileModel profile){
         String id = UUID.randomUUID().toString();

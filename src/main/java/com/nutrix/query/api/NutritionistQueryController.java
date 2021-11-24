@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import queries.GetNutritionistsQuery;
@@ -34,7 +35,10 @@ public class NutritionistQueryController {
     @GetMapping(path = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Búsqueda de todos los Nutritionist", notes ="Método que busca a todos los Nutritionists" )
     @ApiResponses({
-            @ApiResponse(code=201, message = "Nutritionists encontrados"),
+            @ApiResponse(code=200, message = "La operación fue exitosa", response = Nutritionist.class),
+            @ApiResponse(code=201, message = "Nutritionists encontrados", response = Nutritionist.class),
+            @ApiResponse(code=401, message = "Es necesario autenticar para obtener la respuesta solicitada"),
+            @ApiResponse(code=403, message = "El cliente no posee los permisos necesarios"),
             @ApiResponse(code=404, message = "Nutritionists no encontrados")
     })
     public ResponseEntity<List<NutritionistResult>> getAll(){
@@ -50,4 +54,34 @@ public class NutritionistQueryController {
         }
 
     }
+
+    //get nutritionist by id
+    @GetMapping(path = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Búsqueda de un Nutritionist", notes ="Método que busca a un Nutritionist" )
+    @ApiResponses({
+            @ApiResponse(code=200, message = "La operación fue exitosa", response = Nutritionist.class),
+            @ApiResponse(code=201, message = "Nutritionist encontrados", response = Nutritionist.class),
+            @ApiResponse(code=401, message = "Es necesario autenticar para obtener la respuesta solicitada"),
+            @ApiResponse(code=403, message = "El cliente no posee los permisos necesarios"),
+            @ApiResponse(code=404, message = "Nutritionist no encontrados")
+    })
+    public ResponseEntity<NutritionistResult> getById(@PathVariable  String id){
+        try{
+            GetNutritionistsQuery getNutritionistsQuery = new GetNutritionistsQuery();
+            List<NutritionistResult> nutritionists = queryGateway.query(getNutritionistsQuery,
+                    ResponseTypes.multipleInstancesOf(NutritionistResult.class))
+                    .join();
+            for (NutritionistResult nutritionist : nutritionists) {
+                if (nutritionist.getId().equals(id)) {
+                    return new ResponseEntity<>(nutritionist, HttpStatus.CREATED);
+                }
+            }
+            return new ResponseEntity<>(HttpStatus.CREATED);
+
+        }catch (Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 }
